@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zephyrex-rpg"
+version = "0.1.0"
+description = "RPG extensions for the ServerFramework — genealogy, state tracking, and logging"
+requires-python = ">=3.11"
+dependencies = [
+    "server @ git+https://github.com/JamesonRGrieve/ServerFramework.git",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "pytest-xdist",
+]
