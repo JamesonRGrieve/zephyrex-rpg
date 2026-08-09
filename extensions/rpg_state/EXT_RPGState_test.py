@@ -5,8 +5,8 @@ import os
 os.environ.setdefault("JWT_SECRET", "x" * 32)
 os.environ.setdefault("PYTEST_CURRENT_TEST", "rpg_state_ext_test")
 
-from serverframework.extensions.rpg_state.BLL_RPGState import ALL_MODELS
-from serverframework.extensions.rpg_state.EXT_RPGState import RPGStateExtension
+from zephyrex.extensions.rpg_state.BLL_RPGState import ALL_MODELS
+from zephyrex.extensions.rpg_state.EXT_RPGState import RPGStateExtension
 
 
 class TestExtensionMetadata:

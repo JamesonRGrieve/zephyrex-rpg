@@ -5,7 +5,7 @@ import os
 os.environ.setdefault("JWT_SECRET", "x" * 32)
 os.environ.setdefault("PYTEST_CURRENT_TEST", "rpg_log_test")
 
-from serverframework.extensions.rpg_log.BLL_RPGLog import (
+from zephyrex.extensions.rpg_log.BLL_RPGLog import (
     ALL_MODELS,
     CombatActionLogManager,
     CombatActionLogModel,

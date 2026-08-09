@@ -14,7 +14,7 @@ import pytest
 os.environ.setdefault("JWT_SECRET", "x" * 32)
 os.environ.setdefault("PYTEST_CURRENT_TEST", "rpg_state_test")
 
-from serverframework.extensions.rpg_state.BLL_RPGState import (
+from zephyrex.extensions.rpg_state.BLL_RPGState import (
     ALL_MODELS,
     CampaignManager,
     CampaignModel,
@@ -110,7 +110,7 @@ class TestPersonInjectionContract:
         assert rp.location_id == "loc-clearing"
 
     def test_no_character_model_in_rpg_state(self):
-        from serverframework.extensions.rpg_state import BLL_RPGState
+        from zephyrex.extensions.rpg_state import BLL_RPGState
 
         assert not hasattr(BLL_RPGState, "CharacterModel")
         assert not hasattr(BLL_RPGState, "CharacterTraitModel")
@@ -140,7 +140,7 @@ class TestUnifiedTraitContract:
     No separate StatusEffectModel exists."""
 
     def test_no_status_effect_model(self):
-        from serverframework.extensions.rpg_state import BLL_RPGState
+        from zephyrex.extensions.rpg_state import BLL_RPGState
 
         assert not hasattr(BLL_RPGState, "StatusEffectModel")
         assert not hasattr(BLL_RPGState, "StatusEffectTraitModel")
@@ -412,7 +412,7 @@ class TestHookDAG:
     the dependency, the reason string explains it."""
 
     def test_no_quest_or_objective_models(self):
-        from serverframework.extensions.rpg_state import BLL_RPGState
+        from zephyrex.extensions.rpg_state import BLL_RPGState
 
         assert not hasattr(BLL_RPGState, "QuestModel")
         assert not hasattr(BLL_RPGState, "ObjectiveModel")
@@ -489,7 +489,7 @@ class TestFactionHierarchy:
         assert party.parent_id == "guild-id"
 
     def test_no_character_factions_table(self):
-        from serverframework.extensions.rpg_state import BLL_RPGState
+        from zephyrex.extensions.rpg_state import BLL_RPGState
 
         assert not hasattr(BLL_RPGState, "CharacterFactionModel")
         assert not hasattr(BLL_RPGState, "PersonFactionModel")
@@ -503,7 +503,7 @@ class TestCycleGuardHooksRegistered:
     succeeded."""
 
     def test_cycle_guard_hook_callables_present(self):
-        from serverframework.extensions.rpg_state import BLL_RPGState
+        from zephyrex.extensions.rpg_state import BLL_RPGState
 
         for name in (
             "_faction_no_cycle",
@@ -515,7 +515,7 @@ class TestCycleGuardHooksRegistered:
             ), f"cycle-guard hook {name} missing"
 
     def test_cycle_guard_utility_imported(self):
-        from serverframework.lib.CycleGuard import (
+        from zephyrex.lib.CycleGuard import (
             CycleGuardError,
             would_create_dag_cycle,
             would_create_tree_cycle,

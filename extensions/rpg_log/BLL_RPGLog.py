@@ -36,16 +36,16 @@ from typing import ClassVar, List, Optional, Type
 
 from pydantic import Field
 
-from serverframework.extensions.genealogy.BLL_Genealogy import PersonModel
-from serverframework.extensions.rpg_state.BLL_RPGState import (
+from zephyrex.extensions.genealogy.BLL_Genealogy import PersonModel
+from zephyrex.extensions.rpg_state.BLL_RPGState import (
     CampaignModel,
     ItemInstanceModel,
     LocationModel,
     TraitModel,
 )
-from serverframework.lib.Pydantic import BaseModel
-from serverframework.lib.Pydantic2FastAPI import RouterMixin
-from serverframework.logic.AbstractLogicManager import (
+from zephyrex.lib.Pydantic import BaseModel
+from zephyrex.lib.Pydantic2FastAPI import RouterMixin
+from zephyrex.logic.AbstractLogicManager import (
     AbstractBLLManager,
     ApplicationModel,
     DateSearchModel,

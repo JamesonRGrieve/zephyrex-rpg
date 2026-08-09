@@ -7,7 +7,7 @@ item / location references.
 
 from typing import ClassVar, List, Type
 
-from serverframework.extensions.AbstractExtensionProvider import (
+from zephyrex.extensions.AbstractExtensionProvider import (
     AbstractStaticExtension,
 )
 
@@ -22,6 +22,6 @@ class RPGStateExtension(AbstractStaticExtension):
 
     @classmethod
     def models(cls) -> List[Type]:
-        from serverframework.extensions.rpg_state.BLL_RPGState import ALL_MODELS
+        from zephyrex.extensions.rpg_state.BLL_RPGState import ALL_MODELS
 
         return list(ALL_MODELS)

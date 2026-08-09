@@ -135,19 +135,19 @@ from typing import ClassVar, List, Literal, Optional, Type
 
 from pydantic import Field
 
-from serverframework.extensions.genealogy.BLL_Genealogy import (
+from zephyrex.extensions.genealogy.BLL_Genealogy import (
     PersonModel,
     RelationshipModel,
 )
-from serverframework.lib.CycleGuard import (
+from zephyrex.lib.CycleGuard import (
     CycleGuardError,
     would_create_dag_cycle,
     would_create_tree_cycle,
 )
-from serverframework.lib.Pydantic import BaseModel
-from serverframework.lib.Pydantic2FastAPI import RouterMixin
-from serverframework.lib.Pydantic2SQLAlchemy import extension_model
-from serverframework.logic.AbstractLogicManager import (
+from zephyrex.lib.Pydantic import BaseModel
+from zephyrex.lib.Pydantic2FastAPI import RouterMixin
+from zephyrex.lib.Pydantic2SQLAlchemy import extension_model
+from zephyrex.logic.AbstractLogicManager import (
     AbstractBLLManager,
     ApplicationModel,
     DateSearchModel,
@@ -162,7 +162,7 @@ from serverframework.logic.AbstractLogicManager import (
     UpdateMixinModel,
     hook_bll,
 )
-from serverframework.logic.BLL_Auth import UserModel
+from zephyrex.logic.BLL_Auth import UserModel
 
 
 # ---------------------------------------------------------------------------

@@ -6,7 +6,7 @@ item / trait / campaign references.
 
 from typing import ClassVar, List, Type
 
-from serverframework.extensions.AbstractExtensionProvider import (
+from zephyrex.extensions.AbstractExtensionProvider import (
     AbstractStaticExtension,
 )
 
@@ -20,6 +20,6 @@ class RPGLogExtension(AbstractStaticExtension):
 
     @classmethod
     def models(cls) -> List[Type]:
-        from serverframework.extensions.rpg_log.BLL_RPGLog import ALL_MODELS
+        from zephyrex.extensions.rpg_log.BLL_RPGLog import ALL_MODELS
 
         return list(ALL_MODELS)

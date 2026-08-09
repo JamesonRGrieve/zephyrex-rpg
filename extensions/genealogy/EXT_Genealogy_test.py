@@ -5,8 +5,8 @@ import os
 os.environ.setdefault("JWT_SECRET", "x" * 32)
 os.environ.setdefault("PYTEST_CURRENT_TEST", "genealogy_ext_test")
 
-from serverframework.extensions.genealogy.BLL_Genealogy import ALL_MODELS
-from serverframework.extensions.genealogy.EXT_Genealogy import GenealogyExtension
+from zephyrex.extensions.genealogy.BLL_Genealogy import ALL_MODELS
+from zephyrex.extensions.genealogy.EXT_Genealogy import GenealogyExtension
 
 
 class TestExtensionMetadata:

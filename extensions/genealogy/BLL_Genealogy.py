@@ -13,9 +13,9 @@ from typing import ClassVar, List, Optional, Type
 
 from pydantic import Field
 
-from serverframework.lib.Pydantic import BaseModel
-from serverframework.lib.Pydantic2FastAPI import RouterMixin
-from serverframework.logic.AbstractLogicManager import (
+from zephyrex.lib.Pydantic import BaseModel
+from zephyrex.lib.Pydantic2FastAPI import RouterMixin
+from zephyrex.logic.AbstractLogicManager import (
     AbstractBLLManager,
     ApplicationModel,
     DateSearchModel,

@@ -7,7 +7,7 @@ Foundational. No upstream extension dependencies. Downstream extensions
 
 from typing import ClassVar, List, Type
 
-from serverframework.extensions.AbstractExtensionProvider import (
+from zephyrex.extensions.AbstractExtensionProvider import (
     AbstractStaticExtension,
 )
 
@@ -21,6 +21,6 @@ class GenealogyExtension(AbstractStaticExtension):
 
     @classmethod
     def models(cls) -> List[Type]:
-        from serverframework.extensions.genealogy.BLL_Genealogy import ALL_MODELS
+        from zephyrex.extensions.genealogy.BLL_Genealogy import ALL_MODELS
 
         return list(ALL_MODELS)

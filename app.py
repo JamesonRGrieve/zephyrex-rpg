@@ -15,7 +15,7 @@ os.environ.setdefault("DATABASE_NAME", "zephyrex_rpg")
 os.environ.setdefault("SEED_DATA", "true")
 os.environ.setdefault("JWT_SECRET", "dev-only-change-in-production-32chars!")
 
-from serverframework import run
+from zephyrex import run
 
 EXTENSIONS = "genealogy,rpg_state,rpg_log"
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
 def create():
     """Return a FastAPI app instance for testing or ASGI mounting."""
-    from serverframework import instance, set_extensions_root
+    from zephyrex import instance, set_extensions_root
 
     set_extensions_root("./extensions")
     return instance(extensions=EXTENSIONS)
