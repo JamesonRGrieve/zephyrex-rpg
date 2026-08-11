@@ -744,3 +744,175 @@ description or in EntityPosts; the structured classification lives in
 | Physical / Metaphysical Law | JournalModel or TaxonModel | kind='law' |
 | Generic Article | JournalModel | kind='note' |
 | Custom Template | PropertyKitModel + any entity | (attribute templates) |
+
+---
+
+## 9. Client-Side Architecture
+
+### What the framework provides
+
+The `zephyrex` npm package (client-framework) gives us:
+
+- **UI primitives** — full shadcn/radix component library (buttons, dialogs,
+  tabs, accordions, inputs, selects, etc.)
+- **Data tables** — sortable, filterable, paginated tables with column headers,
+  export, toolbar, view options
+- **Dynamic forms** — schema-driven CRUD forms (`DynamicForm` + Field
+  primitives: text, password, select, radio, checkbox, etc.)
+- **Markdown rendering** — code blocks, headings, images, links, tab panels
+- **Dropzone** — file upload with drag-and-drop
+- **Auth** — login/register/MFA flows, session management, route protection
+- **Sidebar + navigation** — collapsible sidebar with nav items, breadcrumbs
+- **Settings** — user/team settings panels
+- **Extension plugin system** — `ZephyrexClientExtension` interface: pages,
+  navItems, settingsPanel, providers, middleware
+
+### What this repo adds
+
+The current client has a single `rpg` extension stub. It needs to be
+decomposed into client extensions mirroring the server tiers, each providing
+the pages, components, and editors for its domain. Downstream consumers (VTT,
+AI framework, video game) import the extensions they need.
+
+### Client extension map
+
+```
+client/src/extensions/
+├── genealogy/          Tier 0 — Person/Relationship CRUD
+├── calendar/           Tier 0 — Calendar editor + display
+├── conversation/       Tier 0 — Chat/dialogue UI
+├── media/              Tier 0 — Asset library + gallery browser
+├── world-taxonomy/     Tier 1 — Tag/race/species/status manager
+├── world-spatial/      Tier 1 — Location tree + map editor
+├── world-narrative/    Tier 1 — Events, timelines, journals, hooks, plots
+├── world-social/       Tier 1 — Faction tree + relationship explorer
+├── world-inventory/    Tier 1 — Item catalog + inventory management
+├── rpg-core/           Tier 2 — Campaign/game-system management
+├── rpg-traits/         Tier 2 — Character sheet + trait math display
+├── rpg-scene/          Tier 2 — Scene editor + viewer
+├── rpg-dice/           Tier 2 — Dice roller + roll table editor
+├── rpg-combat/         Tier 2 — Combat tracker UI
+├── rpg-cards/          Tier 2 — Deck/card manager
+├── rpg-log/            Tier 3 — Event log viewer
+├── ai-character/       Tier AI — Character card editor
+└── ai-lorebook/        Tier AI — Lorebook entry editor
+```
+
+Each extension exports a `ZephyrexClientExtension` with pages, nav items, and
+optionally a settings panel and context providers.
+
+### Component categories
+
+The client needs three categories of components beyond what the framework
+provides:
+
+#### A. Entity CRUD (all extensions)
+
+Every server model needs list / detail / create / edit views. The framework's
+data-table + dynamic-form handle the generic CRUD pattern — most entities
+render with zero custom UI. Specialisations needed:
+
+| Component | Used by | Description |
+|-----------|---------|-------------|
+| **RichTextEditor** | All entities (entry/description), EntityPosts, JournalPages | Block-based editor (Tiptap or Plate) with entity mention/linking (`@Character Name` → inline tooltip with preview card, resolved to entity ID on save). Supports Kanka-style `[entity:id]` syntax and World Anvil–style secrets/spoiler blocks (visibility-controlled inline regions via ACL). |
+| **EntityMentionPopover** | RichTextEditor | Typeahead search across all entity types; on select, inserts a mention token; on hover/click in rendered text, shows a preview card (name, image, type, first line of description). |
+| **HierarchyTree** | Locations, Factions, Tags, Taxonomy, Hooks, Plots | Recursive expandable tree with drag-to-reparent, inline create, context menu (edit, delete, move). Reusable for any model with `parent_id`. |
+| **PolymorphicEntityPicker** | Map pins, lorebook sources, posts, reminders, scene notes, stamp entity links | Searchable select that spans all entity types. Stores `target_entity_type + target_entity_id`. Shows type icon + name. |
+| **PropertyKitEditor** | world-taxonomy | Define attribute templates (ordered key/value with types); apply to entities. |
+| **InventoryPanel** | world-inventory | Cross-entity: attach to any entity detail view. Item picker + quantity editor. |
+
+#### B. Specialised editors (heavy UI)
+
+| Component | Extension | Description | Key library |
+|-----------|-----------|-------------|-------------|
+| **MapEditor** | world-spatial | The Inkarnate-style cartography canvas. Full 2D editor for authoring maps at any scale (stellar → interior). Sub-components: | Pixi.js or Konva |
+| ↳ StampPalette | | Browsable/searchable stamp library filtered by map scale. Category tree, thumbnail grid, drag-to-canvas. | |
+| ↳ StampTransformHandles | | Move, rotate, scale, flip placed stamps. Variant axis selector (state/damage/orientation dropdown per axis). | |
+| ↳ TerrainBrush | | Polygon drawing tool for biome/terrain regions. Paint mode (click-to-add vertices, close polygon) or freehand. Texture/color picker per region. | |
+| ↳ PathTool | | Draw roads, rivers, borders, orbits. Click-to-add points with Bézier curve handles. Stroke style picker. | |
+| ↳ LayerPanel | | Layer list with visibility toggles, ordering, add/remove. Each layer shows its stamps/terrain/paths. | |
+| ↳ PinTool | | Place map pins/markers linked to entities via PolymorphicEntityPicker. Icon/color/size config. | |
+| ↳ GridOverlay | | Toggleable grid render (square, hex variants) with snap-to-grid for stamp placement. | |
+| ↳ ZoomPanControls | | Scroll-to-zoom, drag-to-pan, minimap, fit-to-view. | |
+| ↳ ExportDialog | | Export to flat image (PNG/WEBP) or UVTT format (image + walls/portals/lights JSON). | |
+| **SceneEditor** | rpg-scene | Room-first scene authoring on top of a map. Extends MapEditor with: | Same canvas lib |
+| ↳ RoomTool | | Draw room polygons. Walls auto-generate from boundaries. Floor texture/color picker. Room nesting (draw inside existing room = child). | |
+| ↳ WallTool | | Place/edit wall segments. Per-sense blocking toggles (move, sight, sound, light). Door type/state selector. Per-side texture picker. Cover height/density sliders. | |
+| ↳ LightTool | | Place lights with dim/bright radius, angle, color, animation preview. Darkness source toggle. | |
+| ↳ SoundTool | | Place ambient sounds with radius, volume, asset picker. | |
+| ↳ TokenPlacer | | Place tokens (entity-linked stamps with actor data). Disposition, vision, light emission, bar binding to traits. | |
+| ↳ RegionTool | | Draw trigger regions with behavior config (teleport, darkness, script). | |
+| ↳ CoverOverlay | | Visualise cover height/density as a heat map overlay for GM review. | |
+| **TimelineEditor** | world-narrative | Horizontal scrollable timeline. Eras as color-banded sections; events as cards positioned chronologically. Drag-to-reorder, click-to-edit. Link events to locations for chronicle view. | react-flow or custom SVG |
+| **CalendarDisplay** | calendar | Custom calendar month grid. Moon phase indicators. Season color bands. Event markers on dates. Clickable dates open reminder/event editor. | Custom — no standard lib handles fantasy calendars |
+| **RelationshipGraph** | genealogy, world-social | Force-directed or hierarchical graph of entity relationships. Nodes = entities (with avatar thumbnail), edges = relationships (labeled, colored by kind). Filter by relationship kind. Click node → entity detail. Two modes: family tree (hierarchical DAG) and diplomacy web (force-directed). | d3-force or react-flow |
+| **CharacterSheet** | rpg-traits | Computed stat display driven by the trait math pipeline. Shows base values, derivative contributions (expand to see what's adding/multiplying), active effects with duration. Layout is game-system-configurable (the extension provides the renderer; the game system provides the template). | |
+| **DiceRoller** | rpg-dice | Formula input, roll button, animated result display. Roll history log. Roll table quick-access. | |
+| **CombatTracker** | rpg-combat | Initiative list with turn indicator, round counter. Add/remove combatants, roll initiative, next turn, combatant groups. Defeat/hidden toggles. | |
+| **CardTable** | rpg-cards | Visual deck/hand/pile display. Draw, shuffle, deal actions. Card face/back flip. Drag between piles. | |
+
+#### C. Specialised viewers (read-only / lightly interactive)
+
+| Component | Extension | Description |
+|-----------|-----------|-------------|
+| **ChronicleViewer** | world-narrative + world-spatial | Timeline + map fusion. Scroll through timeline entries; map pans/zooms to the event's location. Read-only — authoring happens in TimelineEditor + MapEditor separately. |
+| **EntityPreviewCard** | All | Hover/popover card showing entity thumbnail, name, type, first lines of description. Used by mentions and relationship graphs. |
+| **SessionLogViewer** | rpg-log | Filterable event log: encounters, combat actions, dialogue, transactions. Grouped by session. |
+| **StampVariantPreview** | world-spatial | Shows all variants of a stamp across all axes in a grid. Used in StampPalette for browsing and in stamp instance detail for axis selection. |
+| **CoverCalculator** | rpg-scene | Given attacker + target positions, traces rays through scene geometry and reports computed cover per game system. Overlays the result on the scene canvas. |
+
+### Shared infrastructure
+
+| Concern | Approach |
+|---------|----------|
+| **Canvas library** | Single choice for map editor + scene editor + chronicle viewer. Pixi.js (WebGL, performant for large maps with many stamps) or Konva (Canvas 2D, simpler API, good enough for authoring). The VTT downstream consumer may swap in its own renderer for real-time play but the authoring canvas is in this repo. |
+| **Graph library** | d3-force for relationship/diplomacy graphs, or react-flow if we want interactive node editing. Family tree needs a hierarchical layout (dagre or ELK). |
+| **Rich text** | Tiptap (ProseMirror-based) or Plate (Slate-based). Needs custom extensions for entity mentions, spoiler blocks, and inline dice rolls. |
+| **GraphQL client** | The framework's `zephyrex` lib provides the server connection. The client extensions use auto-generated GraphQL queries (via zod2gql) for all CRUD. |
+| **State management** | React context per extension (provided via the `providers` array on `ZephyrexClientExtension`). No global store — each extension owns its state. The framework's auth/session state is provided by `ZephyrexProvider`. |
+| **Entity type registry** | A client-side registry mapping `entity_type` strings to their icon, color, label, detail page route, and preview card component. Used by PolymorphicEntityPicker, EntityMentionPopover, MapPinTool, and anywhere an entity reference resolves to UI. |
+
+### Build order (client)
+
+Mirrors the server phases. Each phase's extensions can develop in parallel
+within the phase.
+
+```
+Phase 1 — Tier 0 generics
+  Shared: RichTextEditor, EntityMentionPopover, HierarchyTree,
+          PolymorphicEntityPicker, EntityPreviewCard, entity type registry
+  genealogy/        — Person/Relationship CRUD + RelationshipGraph (family tree mode)
+  calendar/         — CalendarDisplay + calendar CRUD
+  conversation/     — Chat UI + message threading
+  media/            — Asset library browser + gallery + dropzone integration
+
+Phase 2 — Tier 1 worldbuilding
+  Shared: MapEditor (full canvas app — the biggest single deliverable)
+  world-taxonomy/   — Tag tree + race/species/status CRUD + PropertyKitEditor
+  world-spatial/    — Location HierarchyTree + MapEditor + PinTool
+  world-narrative/  — TimelineEditor + ChronicleViewer + Journal multi-page
+                      editor + Hook DAG editor + PlotElementEditor + EntityPosts
+  world-social/     — Faction HierarchyTree + RelationshipGraph (diplomacy mode)
+                      + DispositionEditor
+  world-inventory/  — Item CRUD + InventoryPanel + EntityInventory attachment
+
+Phase 3 — Tier 2 RPG + Tier AI
+  rpg-core/         — Campaign/GameSystem CRUD + campaign dashboard
+  rpg-traits/       — CharacterSheet + trait/derivative editors
+  rpg-scene/        — SceneEditor (extends MapEditor with room/wall/light/
+                      token/region tools) + CoverOverlay + CoverCalculator
+  rpg-dice/         — DiceRoller + RollTable editor
+  rpg-combat/       — CombatTracker
+  rpg-cards/        — CardTable + Deck editor
+  rpg-log/          — SessionLogViewer
+  ai-character/     — Character card form (V2/V3 fields) + sprite manager
+  ai-lorebook/      — Lorebook entry editor (full SillyTavern field surface)
+```
+
+### What downstream consumers add on top
+
+| Consumer | Client-side additions |
+|----------|----------------------|
+| **VTT** | Real-time play canvas (live token movement, fog-of-war pixel reveal, dynamic lighting shader, chat/dice panel, initiative HUD, player cursors, WebSocket sync). Uses the scene data from rpg-scene but replaces the authoring canvas with a play-mode renderer. |
+| **AI framework** | AI chat interface (response streaming, persona switcher, generation controls, context window display), AI GM/player orchestration UI, sentiment sprite renderer, lorebook context debugger. |
+| **Video game** | Game engine integration (Unity/Godot/Bevy scene loader that reads rpg-scene data), in-game HUD, inventory/dialogue/combat UI in the game engine's native toolkit. No web UI — consumes the API directly. |
