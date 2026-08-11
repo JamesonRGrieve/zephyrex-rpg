@@ -1,8 +1,13 @@
 __pycache__/
 *.pyc
 *.db
+*.db-shm
+*.db-wal
 .venv/
 *.egg-info/
 dist/
 build/
 .eggs/
+node_modules/
+.next/
+pnpm-lock.yaml

@@ -1,29 +1,47 @@
 # Zephyrex RPG
 
-Consumer project built on [ServerFramework](https://github.com/JamesonRGrieve/ServerFramework). Provides RPG domain extensions — the framework handles all infrastructure.
+Full-stack RPG campaign manager built on the Zephyrex framework.
 
-## Architecture
+## Structure
 
-This is a **consumer project**, not a framework fork. It depends on `zephyrex` via pip and provides only domain-specific extensions:
-
-- **genealogy** — person/family tree models for RPG characters
-- **rpg_state** — character state, inventory, progression tracking
-- **rpg_log** — session/event logging for RPG campaigns
-
-## Commands
-
-```bash
-pip install -e ".[dev]"      # Install with dev deps (pulls zephyrex from git)
-python app.py                # Boot the server on port 2000
-pytest extensions/           # Run extension tests
+```
+server/     Python backend — custom extensions for the Zephyrex server
+client/     Next.js frontend — consumes the `zephyrex` npm package
 ```
 
-## How it works
+## Server
 
-`app.py` calls `zephyrex.run(extensions="genealogy,rpg_state,rpg_log", extensions_path="./extensions")`. The framework:
+The server is a consumer of the `zephyrex` Python package (PyPI). It defines three domain extensions:
 
-1. Discovers `BLL_*.py` models in `./extensions/<name>/`
-2. Auto-generates SQLAlchemy tables (via `create_all` fallback — no Alembic migrations needed for dev)
-3. Auto-generates REST CRUD endpoints at `/v1/<resource>`
-4. Auto-generates GraphQL schema
-5. Provides core auth (User, Team, Role, Session) out of the box
+- `genealogy` — family tree / lineage tracking
+- `rpg_state` — character stats, inventory, abilities
+- `rpg_log` — session logging and campaign history
+
+```bash
+cd server
+pip install -e "../../server-framework[all]"
+python app.py
+```
+
+## Client
+
+The client is a consumer of the `zephyrex` npm package. It defines one client extension (`rpg`) that adds RPG-specific pages and navigation.
+
+```bash
+cd client
+pnpm install
+pnpm dev
+```
+
+## Testing
+
+```bash
+# Server tests
+cd server && python -m pytest extensions/
+
+# Client unit tests
+cd client && pnpm test
+
+# Full stack e2e
+cd client && pnpm test:e2e
+```
