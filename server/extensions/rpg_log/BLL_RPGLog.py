@@ -43,8 +43,8 @@ from zephyrex.extensions.rpg_state.BLL_RPGState import (
     LocationModel,
     TraitModel,
 )
-from zephyrex.lib.Pydantic import BaseModel
-from zephyrex.lib.Pydantic2FastAPI import RouterMixin
+from zephyrex.pydantic2.registry import BaseModel
+from zephyrex.pydantic2.fastapi import RouterMixin
 from zephyrex.logic.AbstractLogicManager import (
     AbstractBLLManager,
     ApplicationModel,

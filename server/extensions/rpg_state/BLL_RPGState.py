@@ -144,9 +144,9 @@ from zephyrex.lib.CycleGuard import (
     would_create_dag_cycle,
     would_create_tree_cycle,
 )
-from zephyrex.lib.Pydantic import BaseModel
-from zephyrex.lib.Pydantic2FastAPI import RouterMixin
-from zephyrex.lib.Pydantic2SQLAlchemy import extension_model
+from zephyrex.pydantic2.registry import BaseModel
+from zephyrex.pydantic2.fastapi import RouterMixin
+from zephyrex.pydantic2.sqlalchemy import extension_model
 from zephyrex.logic.AbstractLogicManager import (
     AbstractBLLManager,
     ApplicationModel,

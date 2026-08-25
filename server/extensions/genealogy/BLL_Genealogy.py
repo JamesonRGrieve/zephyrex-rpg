@@ -13,8 +13,8 @@ from typing import ClassVar, List, Optional, Type
 
 from pydantic import Field
 
-from zephyrex.lib.Pydantic import BaseModel
-from zephyrex.lib.Pydantic2FastAPI import RouterMixin
+from zephyrex.pydantic2.registry import BaseModel
+from zephyrex.pydantic2.fastapi import RouterMixin
 from zephyrex.logic.AbstractLogicManager import (
     AbstractBLLManager,
     ApplicationModel,
