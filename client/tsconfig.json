@@ -31,7 +31,7 @@
       "@zephyrex/auth/*": [
         "../../auth/src/*"
       ],
-      "@zephyrex/zod2gql": [
+      "zod2gql": [
         "../../zod2gql/src"
       ],
       "@jgrieve/forms/*": [

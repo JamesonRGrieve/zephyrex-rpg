@@ -14,7 +14,7 @@
   "dependencies": {
     "zephyrex": "file:../../client-framework",
     "@zephyrex/auth": "file:../../auth",
-    "@zephyrex/zod2gql": "file:../../zod2gql",
+    "zod2gql": "file:../../zod2gql",
     "@jgrieve/forms": "file:../../dynamic-form",
     "next": "^16.2.6",
     "react": "^19.2.8",

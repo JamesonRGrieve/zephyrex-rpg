@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import type { ZephyrexConfig } from 'zephyrex';
+import { genealogyExtension, rpgLogExtension, rpgStateExtension } from './extensions/campaign';
 import { rpgExtension } from './extensions/rpg';
 
 const config: ZephyrexConfig = {
@@ -14,7 +15,7 @@ const config: ZephyrexConfig = {
   auth: {
     privateRoutes: ['/rpg', '/settings', '/team'],
   },
-  extensions: [rpgExtension],
+  extensions: [rpgExtension, genealogyExtension, rpgLogExtension, rpgStateExtension],
 };
 
 export default config;

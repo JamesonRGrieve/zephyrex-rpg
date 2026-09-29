@@ -5,7 +5,7 @@ const frameworkDir = path.resolve(__dirname, '../../client-framework');
 module.exports = {
   output: 'standalone',
   typescript: { ignoreBuildErrors: true },
-  transpilePackages: ['zephyrex', '@zephyrex/auth', '@zephyrex/zod2gql', '@jgrieve/forms'],
+  transpilePackages: ['zephyrex', '@zephyrex/auth', 'zod2gql', '@jgrieve/forms'],
   turbopack: {
     root: path.resolve(__dirname, '../..'),
     resolveAlias: {
